@@ -1,0 +1,7 @@
+@mixin box-style{
+	box-sizing: border-box;
+	box-shadow: 0px 2px 8px 0px $border-color;
+	background-color: $white;
+  padding: 20px;
+  border-radius: 5px;
+}

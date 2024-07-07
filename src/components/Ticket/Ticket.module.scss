@@ -1,0 +1,83 @@
+@import '/src/styles/mixins.scss';
+
+.ticket {
+  @include box-style;
+  display: flex;
+  flex-direction: column;
+	row-gap: 20px;
+  text-transform: uppercase;
+}
+
+.title {
+	font-size: 12px;
+  color: $light-grey;
+	line-height: 18px;
+}
+
+.ticket-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &__price {
+		@media (min-width: 768px) {
+			font-size: 24px;
+		}
+		font-size: 20px;
+    font-weight: bold;
+    color: #2196f3;
+  }
+}
+
+.ticket-info {
+	display: flex;
+	flex-direction: column;
+	row-gap: 10px;
+  &__segment {
+		@media (min-width: 768px) {
+			column-gap: 0;
+		}
+    display: flex;
+		column-gap: 5px;
+    justify-content: space-between;
+  }
+
+	&__time{
+		letter-spacing: 0px;
+		font-size: 14px;
+		line-height: 21px;
+	}
+
+  &__route {
+    display: flex;
+    flex-direction: column;
+    font-weight: bold;
+  }
+
+  &__trek {
+		font-size: 12px;
+    color: $light-grey;
+		line-height: 18px;
+  }
+
+  &__duration {
+    display: flex;
+    flex-direction: column;
+		span:nth-child(2){
+			letter-spacing: 0px;
+			font-size: 14px;
+			line-height: 21px;
+		}
+  }
+
+  &__stops {
+    display: flex;
+    flex-direction: column;
+  }
+	&__stop-locations {
+		font-weight: bold;
+		letter-spacing: 0px;
+		font-size: 14px;
+		line-height: 21px;
+	}
+}

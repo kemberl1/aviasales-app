@@ -1,0 +1,32 @@
+body {
+  @media (min-width: 768px) {
+    max-width: 1120px;
+  }
+  margin: 0 auto;
+  font-family: $font-family-semiBold;
+  background-color: $background-color;
+  color: $dark-grey;
+  letter-spacing: 0.5px;
+  text-align: left;
+}
+
+.aviasales-app {
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+  @media (min-width: 768px) {
+    padding: 50px 150px;
+  }
+  padding: 20px 40px;
+}
+
+.main-content {
+  @media (min-width: 768px) {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 20px;
+  }
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+}

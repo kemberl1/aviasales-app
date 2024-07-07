@@ -1,0 +1,32 @@
+//General
+@import 'variables';
+@import 'mixins';
+@import '/node_modules/normalize.css/normalize.css';
+@import '/src/styles/fonts.scss';
+
+//ErrorIndicator
+@import '../components/ErrorComponents/ErrorIndicator/ErrorIndicator.scss';
+
+//App
+@import '../components/App/App.module.scss';
+
+//Header
+@import '../components/Header/Header.module.scss';
+
+//Filter
+@import '../components/Filter/Filter.module.scss';
+
+//Tabs
+@import '../components/Tabs/Tabs.module.scss';
+
+//TicketList
+@import '../components/TicketList/TicketList.module.scss';
+
+//Ticket
+@import '../components/Ticket/Ticket.module.scss';
+
+//Footer
+@import '../components/Footer/Footer.module.scss';
+
+//Button
+@import '../components/Button/Button.module.scss'

@@ -1,0 +1,35 @@
+.tabs {
+  @media (min-width: 768px) {
+    flex-direction: row;
+    border: none;
+  }
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgb(223, 229, 236);
+  border-radius: 5px;
+
+  .button {
+		width: 100%;
+    &:first-child {
+      border-radius: 5px 5px 0 0;
+    }
+
+    &:last-child {
+      border-radius: 0 0 5px 5px;
+    }
+
+    @media (min-width: 768px) {
+      &:first-child {
+        border-radius: 5px 0 0 5px;
+      }
+
+      &:last-child {
+        border-radius: 0 5px 5px 0;
+      }
+
+      &:not(:first-child) {
+        border-left: none;
+      }
+    }
+  }
+}
