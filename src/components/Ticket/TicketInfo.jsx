@@ -6,20 +6,20 @@ export default function TicketInfo({ segment }) {
       {segment.map((ticketInfo, index) => (
         <div key={index} className="ticket-info__segment">
           <div key={index} className="ticket-info__route">
-            <span className="ticket-info__trek">
+            <span className={ticket.title}>
               {ticketInfo.origin} - {ticketInfo.destination}
             </span>
-            <span className="ticket-info__time">
+            <span className={ticket.description}>
               {ticketInfo.departureTime} - {ticketInfo.arrivalTime}
             </span>
           </div>
           <div className="ticket-info__duration">
             <span className={ticket.title}>В пути</span>
-            <span>{ticketInfo.duration}</span>
+            <span className={ticket.description}>{ticketInfo.duration}</span>
           </div>
           <div className="ticket-info__stops">
             <span className={ticket.title}>{ticketInfo.stops} ПЕРЕСАДКИ</span>
-            <span className="ticket-info__stop-locations">{ticketInfo.stopLocations.join(', ')}</span>
+            <span className={ticket.description}>{ticketInfo.stopLocations.join(', ')}</span>
           </div>
         </div>
       ))}

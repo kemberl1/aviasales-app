@@ -1,9 +1,9 @@
 import Button from '../Button/Button'
 
-export default function Footer() {
+export default function LoadMoreButton() {
   return (
-    <footer className="footer">
+    <section className="button-show--more">
       <Button description="Показать еще 5 билетов!" />
-    </footer>
+    </section>
   )
 }

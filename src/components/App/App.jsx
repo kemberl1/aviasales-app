@@ -1,19 +1,19 @@
 import Tabs from '../Tabs/Tabs'
 import Header from '../Header/Header'
-import Filter from '../Filter/Filter'
 import TicketList from '../TicketList/TicketList'
-import Footer from '../Footer/Footer'
+import LoadMoreButton from '../LoadMoreButton/LoadMoreButton'
+import FilterContainer from '../../containers/FilterContainer'
 
 export default function App() {
   return (
     <div className="aviasales-app">
       <Header />
       <main className="main-content">
-        <Filter />
+        <FilterContainer />
         <section className="tickets-section">
           <Tabs />
           <TicketList />
-          <Footer />
+          <LoadMoreButton />
         </section>
       </main>
     </div>
