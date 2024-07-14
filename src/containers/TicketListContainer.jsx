@@ -10,7 +10,6 @@ import ErrorIndicator from '../components/ErrorIndicator/ErrorIndicator'
 
 import LoadMoreButtonContainer from './LoadMoreButtonContainer'
 
-
 const selectTickets = (state) => state.tickets
 const selectTabs = (state) => state.tabs
 const selectFilters = (state) => state.filters
@@ -18,7 +17,7 @@ const selectFilters = (state) => state.filters
 function TicketListContainer({ visibleTickets, loadMoreTickets }) {
   const dispatch = useDispatch()
   const { tickets, status, error } = useSelector(selectTickets)
-  const { cheapest, fastest } = useSelector(selectTabs)
+  const { cheapest, fastest, optimal } = useSelector(selectTabs)
   const filters = useSelector(selectFilters)
 
   useEffect(() => {
@@ -33,32 +32,70 @@ function TicketListContainer({ visibleTickets, loadMoreTickets }) {
     loadTickets()
   }, [dispatch])
 
+  const passesFilter = (stopsCountOutbound, stopsCountInbound, filter) => {
+    if (filter === 'none')
+      return (
+        (stopsCountOutbound === 0 && stopsCountInbound <= 0) || (stopsCountOutbound <= 0 && stopsCountInbound === 0)
+      )
+    if (filter === 'one')
+      return (
+        (stopsCountOutbound === 1 && stopsCountInbound <= 1) || (stopsCountOutbound <= 1 && stopsCountInbound === 1)
+      )
+    if (filter === 'two')
+      return (
+        (stopsCountOutbound === 2 && stopsCountInbound <= 2) || (stopsCountOutbound <= 2 && stopsCountInbound === 2)
+      )
+    if (filter === 'three')
+      return (
+        (stopsCountOutbound === 3 && stopsCountInbound <= 3) || (stopsCountOutbound <= 3 && stopsCountInbound === 3)
+      )
+    return false
+  }
+
   const filteredTickets = useMemo(() => {
     let filtered = tickets.slice()
 
     if (!filters.all) {
       filtered = filtered.filter((ticket) => {
-        const stopsCount = ticket.segments.reduce((acc, segment) => acc + segment.stops.length, 0)
-        if (filters.none && stopsCount === 0) return true
-        if (filters.one && stopsCount === 1) return true
-        if (filters.two && stopsCount === 2) return true
-        if (filters.three && stopsCount === 3) return true
-        return false
-      })
-    }
+        const stopsCountOutbound = ticket.segments[0].stops.length
+        const stopsCountInbound = ticket.segments[1].stops.length
 
-    if (cheapest) {
-      filtered.sort((a, b) => a.price - b.price)
-    } else if (fastest) {
-      filtered.sort((a, b) => {
-        const durationA = a.segments.reduce((acc, segment) => acc + segment.duration, 0)
-        const durationB = b.segments.reduce((acc, segment) => acc + segment.duration, 0)
-        return durationA - durationB
+        const filterConditions = [
+          filters.none && passesFilter(stopsCountOutbound, stopsCountInbound, 'none'),
+          filters.one && passesFilter(stopsCountOutbound, stopsCountInbound, 'one'),
+          filters.two && passesFilter(stopsCountOutbound, stopsCountInbound, 'two'),
+          filters.three && passesFilter(stopsCountOutbound, stopsCountInbound, 'three'),
+        ]
+
+        return filterConditions.some((condition) => condition)
       })
     }
 
     return filtered
-  }, [tickets, filters, cheapest, fastest])
+  }, [tickets, filters])
+
+  const sortedTickets = useMemo(() => {
+    const sorted = filteredTickets.slice()
+
+    if (cheapest) {
+      sorted.sort((a, b) => a.price - b.price)
+    } else if (fastest) {
+      sorted.sort((a, b) => {
+        const durationA = a.segments.reduce((acc, segment) => acc + segment.duration, 0)
+        const durationB = b.segments.reduce((acc, segment) => acc + segment.duration, 0)
+        return durationA - durationB
+      })
+    } else if (optimal) {
+      sorted.sort((a, b) => {
+        const durationA = a.segments.reduce((acc, segment) => acc + segment.duration, 0)
+        const durationB = b.segments.reduce((acc, segment) => acc + segment.duration, 0)
+        const priceDiff = a.price - b.price
+        return priceDiff !== 0 ? priceDiff : durationA - durationB
+      })
+    }
+
+    return sorted
+  }, [filteredTickets, cheapest, fastest, optimal])
 
   const filtersSelected = Object.values(filters).some((filter) => filter)
 
@@ -70,7 +107,7 @@ function TicketListContainer({ visibleTickets, loadMoreTickets }) {
     return <ErrorIndicator message={error.message} />
   }
 
-  if (status === 'fulfilled' && filteredTickets.length === 0) {
+  if (status === 'fulfilled' && sortedTickets.length === 0) {
     return <Empty description="Рейсов, подходящих под заданные фильтры, не найдено" />
   }
 
@@ -78,17 +115,17 @@ function TicketListContainer({ visibleTickets, loadMoreTickets }) {
     return <div>Задайте параметры поиска билетов по фильтрам</div>
   }
 
-  const visibleFilteredTickets = filteredTickets.slice(0, visibleTickets)
+  const visibleSortedTickets = sortedTickets.slice(0, visibleTickets)
 
   return (
     <>
       {status === 'pending' && <Loader />}
-      {filteredTickets.length > 0 && (
+      {sortedTickets.length > 0 && (
         <>
-          <TicketList tickets={visibleFilteredTickets} />
+          <TicketList tickets={visibleSortedTickets} />
           <LoadMoreButtonContainer
             loadMoreTickets={loadMoreTickets}
-            hasMoreTickets={visibleFilteredTickets.length < filteredTickets.length}
+            hasMoreTickets={visibleSortedTickets.length < sortedTickets.length}
           />
         </>
       )}

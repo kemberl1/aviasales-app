@@ -23,6 +23,7 @@ export const fetchTickets = createAsyncThunk(
       let stop = false
       while (!stop) {
         const response = await fetch(`https://aviasales-test-api.kata.academy/tickets?searchId=${searchId}`)
+
         if (!response.ok) {
           throw new Error('Failed to fetch tickets')
         }
