@@ -1,11 +1,11 @@
 import TicketHeader from './TicketHeader'
 import TicketInfo from './TicketInfo'
 
-function Ticket({ ticketData }) {
+function Ticket({ ticket }) {
   return (
     <div className="ticket">
-      <TicketHeader price={ticketData.price} airline={ticketData.airline}/>
-      <TicketInfo segment={ticketData.segments}/>
+      <TicketHeader price={ticket.price} carrier={ticket.carrier}/>
+      <TicketInfo segment={ticket.segments}/>
     </div>
   )
 }

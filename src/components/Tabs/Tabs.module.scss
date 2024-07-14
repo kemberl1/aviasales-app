@@ -18,6 +18,11 @@
       border-radius: 0 0 5px 5px;
     }
 
+		&:hover {
+			background-color: $blue;
+			color: $white;
+		}
+
     @media (min-width: 768px) {
       &:first-child {
         border-radius: 5px 0 0 5px;

@@ -1,10 +1,18 @@
+import { useState } from 'react'
 import Tabs from '../Tabs/Tabs'
 import Header from '../Header/Header'
-import TicketList from '../TicketList/TicketList'
-import LoadMoreButton from '../LoadMoreButton/LoadMoreButton'
 import FilterContainer from '../../containers/FilterContainer'
+import TicketListContainer from '../../containers/TicketListContainer'
+import LoadMoreButtonContainer from '../../containers/LoadMoreButtonContainer'
 
 export default function App() {
+
+  const [visibleTickets, setVisibleTickets] = useState(5)
+
+  const loadMoreTickets = () => {
+    setVisibleTickets((prev) => prev + 5)
+  }
+
   return (
     <div className="aviasales-app">
       <Header />
@@ -12,8 +20,8 @@ export default function App() {
         <FilterContainer />
         <section className="tickets-section">
           <Tabs />
-          <TicketList />
-          <LoadMoreButton />
+          <TicketListContainer visibleTickets={visibleTickets}/>
+          <LoadMoreButtonContainer loadMoreTickets={loadMoreTickets}/>
         </section>
       </main>
     </div>

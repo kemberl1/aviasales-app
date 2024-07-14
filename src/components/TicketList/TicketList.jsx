@@ -1,15 +1,10 @@
 import Ticket from '../Ticket/Ticket'
 
-import ticketsDataTest from './ticketsDataTest'
-
-const ticketsData = ticketsDataTest
-
-function TicketList(props) {
-  const { data } = props
+function TicketList({ tickets }) {
   return (
     <div className="tickets">
-      {ticketsData.map((dataItem, index) => (
-        <Ticket key={index} ticketData={dataItem} />
+      {tickets.map((ticket, index) => (
+        <Ticket key={index} ticket={ticket} />
       ))}
     </div>
   )
