@@ -1,10 +1,15 @@
-.tickets-section{
-	display: flex;
-	flex-direction: column;
-	row-gap: 20px;
+.tickets-section {
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
 }
-.tickets{
-		display: flex;
-		flex-direction: column;
-		row-gap: 20px;
+.tickets {
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+}
+.ticket-list {
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
 }

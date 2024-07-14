@@ -17,9 +17,11 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.6",
     "@vitejs/plugin-react": "^4.2.1",
-    "antd": "^5.18.1",
+    "antd": "^5.19.1",
     "autoprefixer": "^10.4.19",
     "date-fns": "^3.6.0",
+    "eslint-plugin-react-redux": "^4.1.0",
+    "immer": "^10.1.1",
     "lodash": "^4.17.21",
     "normalize.css": "^8.0.1",
     "prop-types": "^15.8.1",

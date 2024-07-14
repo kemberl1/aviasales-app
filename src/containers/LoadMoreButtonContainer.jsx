@@ -1,10 +1,14 @@
-import { useSelector } from 'react-redux'
+import PropTypes from 'prop-types'
+
 import LoadMoreButton from '../components/LoadMoreButton/LoadMoreButton'
 
-function LoadMoreButtonContainer({ loadMoreTickets }) {
-  const tickets = useSelector((state) => state.tickets.tickets)
+function LoadMoreButtonContainer({ loadMoreTickets, hasMoreTickets }) {
+  return hasMoreTickets && <LoadMoreButton loadMoreTickets={loadMoreTickets} />
+}
 
-  return tickets.length > 0 && <LoadMoreButton loadMoreTickets={loadMoreTickets} />
+LoadMoreButtonContainer.propTypes = {
+  loadMoreTickets: PropTypes.func.isRequired,
+  hasMoreTickets: PropTypes.bool.isRequired,
 }
 
 export default LoadMoreButtonContainer

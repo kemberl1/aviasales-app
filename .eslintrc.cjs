@@ -9,8 +9,8 @@ module.exports = {
     'airbnb', // Основные правила Airbnb
     'airbnb/hooks', // Правила для React hooks
     'plugin:react/jsx-runtime', // Поддержка нового JSX runtime
-    'prettier', // отключения конфликтующих правил
-    'plugin:redux-toolkit/recommended',
+    'prettier', // Отключения конфликтующих правил
+    'plugin:react-redux/recommended',
   ],
   parser: '@babel/eslint-parser',
   parserOptions: {
@@ -26,10 +26,10 @@ module.exports = {
   },
   plugins: [
     'react', // Поддержка React
+    'react-redux',
     'import', // Поддержка правил для модулей
     'react-hooks', // Поддержка правил для React hooks
     'jsx-a11y', // Поддержка правил для доступности JSX
-    'redux-toolkit',
   ],
   rules: {
     indent: ['error', 2, { SwitchCase: 1 }], // Настройка отступов (2 пробела, 1 пробел для switch case)

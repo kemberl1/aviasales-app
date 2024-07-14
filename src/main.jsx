@@ -5,8 +5,7 @@ import { Provider } from 'react-redux'
 
 import './styles/main.scss'
 
-import ErrorIndicator from './components/ErrorComponents/ErrorIndicator/ErrorIndicator'
-import ErrorMessages from './components/ErrorComponents/ErrorMessages/ErrorMessages'
+import ErrorIndicator from './components/ErrorIndicator/ErrorIndicator'
 import App from './components/App/App'
 import store from './store/store'
 
@@ -19,7 +18,7 @@ root.render(
       </Provider>
     </Online>
     <Offline>
-      <ErrorIndicator message={ErrorMessages.NETWORK_ERROR} />
+      <ErrorIndicator message="Проблемы с соединением" />
     </Offline>
   </React.StrictMode>
 )

@@ -4,7 +4,9 @@ import Filter from '../components/Filter/Filter'
 import { toggleFilter } from '../store/filtersSlice'
 
 function FilterContainer() {
-  const filters = useSelector((state) => state.filters)
+  const selectFilters = (state) => state.filters
+
+  const filters = useSelector(selectFilters)
   const dispatch = useDispatch()
 
   const handleToggle = (id) => {

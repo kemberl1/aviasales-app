@@ -13,7 +13,6 @@ const filtersSlice = createSlice({
   initialState,
   reducers: {
     toggleFilter(state, action) {
-      console.log('filter: ', action)
       const { filter } = action.payload
       let newState = { ...state }
 

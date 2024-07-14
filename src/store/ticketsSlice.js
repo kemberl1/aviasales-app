@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import {produce} from 'immer'
 
 export const fetchSearchId = createAsyncThunk('tickets/fetchSearchId', async (_, { rejectWithValue }) => {
   try {
@@ -19,32 +20,28 @@ export const fetchTickets = createAsyncThunk(
     try {
       let stop = false
       while (!stop) {
-        try {
-          const response = await fetch(`https://aviasales-test-api.kata.academy/tickets?searchId=${searchId}`)
-          if (!response.ok) {
-            throw new Error('Failed to fetch tickets')
-          }
-          const data = await response.json()
-          if (data.tickets.length > 0) {
-            dispatch(appendTickets(data.tickets))
-          }
-          stop = data.stop
-        } catch (error) {
-          console.error('Error fetching tickets, retrying...', error)
-          await new Promise((resolve) => setTimeout(resolve, 1000))
+        const response = await fetch(`https://aviasales-test-api.kata.academy/tickets?searchId=${searchId}`)
+        if (!response.ok) {
+          throw new Error('Failed to fetch tickets')
         }
+        const data = await response.json()
+        if (data.tickets.length > 0) {
+          dispatch(appendTickets(data.tickets))
+        }
+        stop = data.stop
       }
-      return
     } catch (error) {
+      await new Promise((resolve) => setTimeout(resolve, 1000))
       return rejectWithValue(error.message)
     }
   }
 )
 
-const setError = (state, action) => {
-  state.status = 'rejected'
-  state.error = action.payload
-}
+const setError = (state, action) =>
+  produce(state, (draftState) => {
+    draftState.status = 'rejected'
+    draftState.error = action.payload
+  })
 
 const ticketsSlice = createSlice({
   name: 'tickets',
@@ -54,31 +51,40 @@ const ticketsSlice = createSlice({
     error: null,
   },
   reducers: {
-    appendTickets: (state, action) => {
-      if (!Array.isArray(state.tickets)) {
-        state.tickets = []
-      }
-      state.tickets = state.tickets.concat(action.payload)
-    },
+    appendTickets: (state, action) =>
+      produce(state, (draftState) => {
+        if (!Array.isArray(draftState.tickets)) {
+          draftState.tickets = []
+        }
+        draftState.tickets = draftState.tickets.concat(action.payload)
+      }),
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchSearchId.pending, (state) => {
-        state.status = 'pending'
-        state.error = null
-      })
-      .addCase(fetchSearchId.fulfilled, (state) => {
-        state.status = 'resolved'
-      })
-      .addCase(fetchSearchId.rejected, setError)
-      .addCase(fetchTickets.pending, (state) => {
-        state.status = 'pending'
-        state.error = null
-      })
-      .addCase(fetchTickets.fulfilled, (state) => {
-        state.status = 'resolved'
-      })
-      .addCase(fetchTickets.rejected, setError)
+      .addCase(fetchSearchId.pending, (state) =>
+        produce(state, (draftState) => {
+          draftState.status = 'pending'
+          draftState.error = null
+        })
+      )
+      .addCase(fetchSearchId.fulfilled, (state) =>
+        produce(state, (draftState) => {
+          draftState.status = 'resolved'
+        })
+      )
+      .addCase(fetchSearchId.rejected, (state, action) => setError(state, action))
+      .addCase(fetchTickets.pending, (state) =>
+        produce(state, (draftState) => {
+          draftState.status = 'pending'
+          draftState.error = null
+        })
+      )
+      .addCase(fetchTickets.fulfilled, (state) =>
+        produce(state, (draftState) => {
+          draftState.status = 'resolved'
+        })
+      )
+      .addCase(fetchTickets.rejected, (state, action) => setError(state, action))
   },
 })
 

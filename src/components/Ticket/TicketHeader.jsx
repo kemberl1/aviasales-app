@@ -1,7 +1,7 @@
-
+import PropTypes from 'prop-types'
 
 export default function TicketHeader({ price, carrier }) {
-	const logoUrl = `https://pics.avs.io/110/36/${carrier}.png`
+  const logoUrl = `https://pics.avs.io/110/36/${carrier}.png`
 
   return (
     <header className="ticket-header">
@@ -9,4 +9,9 @@ export default function TicketHeader({ price, carrier }) {
       <img className="ticket-header__logo" src={logoUrl} alt={carrier} />
     </header>
   )
+}
+
+TicketHeader.propTypes = {
+  price: PropTypes.number.isRequired,
+  carrier: PropTypes.string.isRequired,
 }
