@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import { format, parseISO, addMinutes } from 'date-fns'
-import { v4 as uuidv4 } from 'uuid' // Import uuidv4 from uuid package
+import { v4 as uuidv4 } from 'uuid'
 
 import ticket from './Ticket.module.scss'
 
@@ -26,7 +26,7 @@ function TicketInfo({ segments }) {
   return (
     <div className="ticket-info">
       {segments.map((segment) => {
-        const segmentKey = uuidv4() // Generate unique key using uuidv4
+        const segmentKey = uuidv4()
         return (
           <div key={segmentKey} className="ticket-info__segment">
             <div className="ticket-info__route">
