@@ -1,5 +1,7 @@
+/* eslint-disable no-param-reassign */
+
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import {produce} from 'immer'
+import { produce } from 'immer'
 
 export const fetchSearchId = createAsyncThunk('tickets/fetchSearchId', async (_, { rejectWithValue }) => {
   try {

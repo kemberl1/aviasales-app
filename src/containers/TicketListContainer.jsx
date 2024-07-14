@@ -10,7 +10,7 @@ import ErrorIndicator from '../components/ErrorIndicator/ErrorIndicator'
 
 import LoadMoreButtonContainer from './LoadMoreButtonContainer'
 
-// Define named selector functions
+
 const selectTickets = (state) => state.tickets
 const selectTabs = (state) => state.tabs
 const selectFilters = (state) => state.filters
