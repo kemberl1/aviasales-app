@@ -32,23 +32,15 @@ function TicketListContainer({ visibleTickets, loadMoreTickets }) {
     loadTickets()
   }, [dispatch])
 
-  const passesFilter = (stopsCountOutbound, stopsCountInbound, filter) => {
+  const passesFilter = (stopsOutbound, stopsInbound, filter) => {
     if (filter === 'none')
-      return (
-        (stopsCountOutbound === 0 && stopsCountInbound <= 0) || (stopsCountOutbound <= 0 && stopsCountInbound === 0)
-      )
+      return (stopsOutbound === 0 && stopsInbound <= 0) || (stopsOutbound <= 0 && stopsInbound === 0)
     if (filter === 'one')
-      return (
-        (stopsCountOutbound === 1 && stopsCountInbound <= 1) || (stopsCountOutbound <= 1 && stopsCountInbound === 1)
-      )
+      return (stopsOutbound === 1 && stopsInbound <= 1) || (stopsOutbound <= 1 && stopsInbound === 1)
     if (filter === 'two')
-      return (
-        (stopsCountOutbound === 2 && stopsCountInbound <= 2) || (stopsCountOutbound <= 2 && stopsCountInbound === 2)
-      )
+      return (stopsOutbound === 2 && stopsInbound <= 2) || (stopsOutbound <= 2 && stopsInbound === 2)
     if (filter === 'three')
-      return (
-        (stopsCountOutbound === 3 && stopsCountInbound <= 3) || (stopsCountOutbound <= 3 && stopsCountInbound === 3)
-      )
+      return (stopsOutbound === 3 && stopsInbound <= 3) || (stopsOutbound <= 3 && stopsInbound === 3)
     return false
   }
 
@@ -81,14 +73,14 @@ function TicketListContainer({ visibleTickets, loadMoreTickets }) {
       sorted.sort((a, b) => a.price - b.price)
     } else if (fastest) {
       sorted.sort((a, b) => {
-        const durationA = a.segments.reduce((acc, segment) => acc + segment.duration, 0)
-        const durationB = b.segments.reduce((acc, segment) => acc + segment.duration, 0)
+        const durationA = a.segments[0].duration + a.segments[1].duration
+        const durationB = b.segments[0].duration + b.segments[1].duration
         return durationA - durationB
       })
     } else if (optimal) {
       sorted.sort((a, b) => {
-        const durationA = a.segments.reduce((acc, segment) => acc + segment.duration, 0)
-        const durationB = b.segments.reduce((acc, segment) => acc + segment.duration, 0)
+        const durationA = a.segments[0].duration + a.segments[1].duration
+        const durationB = b.segments[0].duration + b.segments[1].duration
         const priceDiff = a.price - b.price
         return priceDiff !== 0 ? priceDiff : durationA - durationB
       })
