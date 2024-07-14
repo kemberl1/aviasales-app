@@ -104,7 +104,7 @@ function TicketListContainer({ visibleTickets, loadMoreTickets }) {
   }
 
   if (!filtersSelected) {
-    return <div>Задайте параметры поиска билетов по фильтрам</div>
+    return <div style={{ textAlign: 'center' }}>Задайте параметры поиска билетов по фильтрам</div>
   }
 
   const visibleSortedTickets = sortedTickets.slice(0, visibleTickets)
