@@ -3,7 +3,7 @@ import { Empty } from 'antd'
 import { useSelector, useDispatch } from 'react-redux'
 import PropTypes from 'prop-types'
 
-import { fetchSearchId, fetchTickets } from '../store/ticketsSlice'
+import { fetchSearchId } from '../store/ticketsSlice'
 import TicketList from '../components/TicketList/TicketList'
 import Loader from '../components/Loader/Loader'
 import ErrorIndicator from '../components/ErrorIndicator/ErrorIndicator'
@@ -16,20 +16,12 @@ const selectFilters = (state) => state.filters
 
 function TicketListContainer({ visibleTickets, loadMoreTickets }) {
   const dispatch = useDispatch()
-  const { tickets, status, error } = useSelector(selectTickets)
+  const { tickets, status, error, fetchError } = useSelector(selectTickets)
   const { cheapest, fastest, optimal } = useSelector(selectTabs)
   const filters = useSelector(selectFilters)
 
   useEffect(() => {
-    const loadTickets = async () => {
-      try {
-        const resultAction = await dispatch(fetchSearchId()).unwrap()
-        await dispatch(fetchTickets(resultAction)).unwrap()
-      } catch (err) {
-        throw new Error('Failed to load tickets')
-      }
-    }
-    loadTickets()
+    dispatch(fetchSearchId())
   }, [dispatch])
 
   const passesFilter = (stopsOutbound, stopsInbound, filter) => {
@@ -91,15 +83,11 @@ function TicketListContainer({ visibleTickets, loadMoreTickets }) {
 
   const filtersSelected = Object.values(filters).some((filter) => filter)
 
-  if (status === 'pending' && tickets.length === 0) {
-    return <Loader />
-  }
-
   if (status === 'rejected' && tickets.length === 0) {
     return <ErrorIndicator message={error.message} />
   }
 
-  if (status === 'fulfilled' && sortedTickets.length === 0) {
+  if (status === 'resolved' && sortedTickets.length === 0) {
     return <Empty description="Рейсов, подходящих под заданные фильтры, не найдено" />
   }
 
@@ -108,16 +96,19 @@ function TicketListContainer({ visibleTickets, loadMoreTickets }) {
   }
 
   const visibleSortedTickets = sortedTickets.slice(0, visibleTickets)
-
+  const fetchTicketsError =
+    fetchError ? <Empty description="Не удалось получить все билеты. Попробуйте позже." /> : null
+  const loading = status === 'pending' ? <Loader /> : null
   return (
     <>
-      {status === 'pending' && <Loader />}
+      {loading}
+      {fetchTicketsError}
       {sortedTickets.length > 0 && (
         <>
           <TicketList tickets={visibleSortedTickets} />
           <LoadMoreButtonContainer
             loadMoreTickets={loadMoreTickets}
-            hasMoreTickets={visibleSortedTickets.length < sortedTickets.length}
+            hasMoreTickets={visibleTickets < sortedTickets.length}
           />
         </>
       )}

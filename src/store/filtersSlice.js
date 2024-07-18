@@ -1,11 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-  all: false,
-  none: false,
-  one: false,
-  two: false,
-  three: false,
+  all: true,
+  none: true,
+  one: true,
+  two: true,
+  three: true,
 }
 
 const filtersSlice = createSlice({

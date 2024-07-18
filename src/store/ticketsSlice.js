@@ -1,50 +1,8 @@
 /* eslint-disable no-param-reassign */
-
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 import { produce } from 'immer'
 
-export const fetchSearchId = createAsyncThunk('tickets/fetchSearchId', async (_, { rejectWithValue }) => {
-  try {
-    const response = await fetch('https://aviasales-test-api.kata.academy/search')
-    if (!response.ok) {
-      throw new Error('Failed to fetch search ID')
-    }
-    const data = await response.json()
-    return data.searchId
-  } catch (error) {
-    return rejectWithValue(error.message)
-  }
-})
-
-export const fetchTickets = createAsyncThunk(
-  'tickets/fetchTickets',
-  async (searchId, { rejectWithValue, dispatch }) => {
-    try {
-      let stop = false
-      while (!stop) {
-        const response = await fetch(`https://aviasales-test-api.kata.academy/tickets?searchId=${searchId}`)
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch tickets')
-        }
-        const data = await response.json()
-        if (data.tickets.length > 0) {
-          dispatch(appendTickets(data.tickets))
-        }
-        stop = data.stop
-      }
-    } catch (error) {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      return rejectWithValue(error.message)
-    }
-  }
-)
-
-const setError = (state, action) =>
-  produce(state, (draftState) => {
-    draftState.status = 'rejected'
-    draftState.error = action.payload
-  })
+import { fetchSearchId as apiFetchSearchId, fetchTicketsApi } from '../API/fetchTickets'
 
 const ticketsSlice = createSlice({
   name: 'tickets',
@@ -52,6 +10,9 @@ const ticketsSlice = createSlice({
     tickets: [],
     status: null,
     error: null,
+    errorCount: 0,
+    fetchError: null,
+    searchId: null,
   },
   reducers: {
     appendTickets: (state, action) =>
@@ -61,36 +22,88 @@ const ticketsSlice = createSlice({
         }
         draftState.tickets = draftState.tickets.concat(action.payload)
       }),
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchSearchId.pending, (state) =>
-        produce(state, (draftState) => {
-          draftState.status = 'pending'
-          draftState.error = null
-        })
-      )
-      .addCase(fetchSearchId.fulfilled, (state) =>
-        produce(state, (draftState) => {
-          draftState.status = 'resolved'
-        })
-      )
-      .addCase(fetchSearchId.rejected, (state, action) => setError(state, action))
-      .addCase(fetchTickets.pending, (state) =>
-        produce(state, (draftState) => {
-          draftState.status = 'pending'
-          draftState.error = null
-        })
-      )
-      .addCase(fetchTickets.fulfilled, (state) =>
-        produce(state, (draftState) => {
-          draftState.status = 'resolved'
-        })
-      )
-      .addCase(fetchTickets.rejected, (state, action) => setError(state, action))
+    incrementErrorCount: (state) =>
+      produce(state, (draftState) => {
+        draftState.errorCount += 1
+      }),
+    resetErrorCount: (state) =>
+      produce(state, (draftState) => {
+        draftState.errorCount = 0
+      }),
+    setFetchError: (state, action) =>
+      produce(state, (draftState) => {
+        draftState.fetchError = action.payload
+      }),
+    setSearchId: (state, action) =>
+      produce(state, (draftState) => {
+        draftState.searchId = action.payload
+      }),
+    fetchTicketsPending: (state) =>
+      produce(state, (draftState) => {
+        draftState.status = 'pending'
+        draftState.error = null
+        draftState.fetchError = null
+      }),
+    fetchTicketsSuccess: (state) =>
+      produce(state, (draftState) => {
+        draftState.status = 'resolved'
+      }),
+    fetchTicketsFailed: (state, action) =>
+      produce(state, (draftState) => {
+        draftState.status = 'rejected'
+        draftState.error = action.payload
+      }),
   },
 })
 
-export const { appendTickets } = ticketsSlice.actions
+export const {
+  appendTickets,
+  incrementErrorCount,
+  resetErrorCount,
+  setFetchError,
+  setSearchId,
+  fetchTicketsPending,
+  fetchTicketsSuccess,
+  fetchTicketsFailed,
+} = ticketsSlice.actions
+
+export const fetchTickets = (searchId) => async (dispatch, getState) => {
+  dispatch(resetErrorCount())
+  const fetchTicketsRecursive = async () => {
+    if (getState().tickets.errorCount >= 4) {
+      dispatch(setFetchError('Не удалось получить информацию о всех билетах'))
+      dispatch(fetchTicketsFailed('Failed to fetch all tickets'))
+      return
+    }
+
+    try {
+      const data = await fetchTicketsApi(searchId)
+      if (data.tickets.length > 0) {
+        dispatch(appendTickets(data.tickets))
+      }
+      if (!data.stop) {
+        fetchTicketsRecursive()
+      } else {
+        dispatch(fetchTicketsSuccess())
+      }
+    } catch (error) {
+      dispatch(incrementErrorCount())
+      fetchTicketsRecursive()
+    }
+  }
+
+  fetchTicketsRecursive()
+}
+
+export const fetchSearchId = () => async (dispatch) => {
+  dispatch(fetchTicketsPending())
+  try {
+    const searchId = await apiFetchSearchId()
+    dispatch(setSearchId(searchId))
+    dispatch(fetchTickets(searchId))
+  } catch (error) {
+    dispatch(fetchTicketsFailed(error.message))
+  }
+}
 
 export default ticketsSlice.reducer
